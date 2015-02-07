@@ -1,44 +1,19 @@
+import json
 from flask import render_template, flash, redirect
 from app import app
 from .forms import LoginForm
 
 
+
+posts
+
 @app.route('/')
 @app.route('/index')
 def index():
     user = {'nickname': 'Stephan'}
-    posts = [
-  {
-    "author": {
-      "nickname": "Corrine Pitts"
-    },
-    "body": "Tempor anim dolore reprehenderit sit nisi cupidatat exercitation."
-  },
-  {
-    "author": {
-      "nickname": "Evangeline Reeves"
-    },
-    "body": "Eu consectetur irure eiusmod culpa enim ipsum et dolore labore."
-  },
-  {
-    "author": {
-      "nickname": "Rosalie Rosa"
-    },
-    "body": "Irure anim voluptate duis anim amet."
-  },
-  {
-    "author": {
-      "nickname": "Abigail Lawrence"
-    },
-    "body": "Non ad deserunt aliquip elit irure duis officia do ea."
-  },
-  {
-    "author": {
-      "nickname": "Hopper Hopkins"
-    },
-    "body": "Aute et duis deserunt elit id voluptate sit irure magna incididunt est sit anim ullamco."
-  }
-]
+    with open('posts.json', 'r') as f:
+        posts = json.load(f)
+
     return render_template("index.html",
                            title='Pycodeshare',
                            user=user,
