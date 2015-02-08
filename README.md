@@ -15,3 +15,16 @@ Running
 
 To run the application in the development web server just execute `run.py` with the Python interpreter from the flask virtual environment.
 
+## Notes
+
+**Database migrations**
+
+
+* the db_downgrade.py script goes back one revision at a time
+* the upgrade.py script goes directly to the latest revision.
+
+Alembic as an alternative to SQLAlchemy-migrate.
+https://alembic.readthedocs.org It is from the author of SQLAlchemy.
+
+It would be great if you could update the tutorial to use (flask-)alembic
+rather than the more or less abandoned sqlalchemy-migrate.
