@@ -7,8 +7,9 @@ from flask import url_for
 from flask import request, g
 from flask.ext.login import login_user, logout_user, current_user, \
     login_required
+from datetime import datetime
 from app import app, db, lm, oid
-from .forms import LoginForm
+from .forms import LoginForm, EditForm
 from .models import User
 
 # load_user is registered with Flask-Login through this decorator
@@ -26,7 +27,10 @@ def before_request():
     This allows all all requests to access the logged in user,
     even inside templates. """
     g.user = current_user
-
+    if g.user.is_authenticated():
+        g.user.last_seen = datetime.utcnow()
+        db.session.add(g.user)
+        db.session.commit()
 
 @app.route('/')
 @app.route('/index')
@@ -90,3 +94,36 @@ def after_login(resp):
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+# <nickname> turns to be an argument to the 'user' function
+@app.route('/user/<nickname>')
+@login_required
+def user(nickname):
+    user = User.query.filter_by(nickname=nickname).first()
+    if user is None:
+        flash('User {0} not found.'.format(nickname))
+        return redirect(url_for('index'))
+    posts = [
+        {'author': user, 'body': 'Test post #1'},
+        {'author': user, 'body': 'Test post #2'}
+    ]
+
+    return render_template('user.html',
+                            user=user,
+                            posts=posts)
+
+@app.route('/edit', methods=['GET', 'POST'])
+@login_required
+def edit():
+    form = EditForm()
+    if form.validate_on_submit():
+        g.user.nickname = form.nickname.data
+        g.user.about_me = form.about_me.data
+        db.session.add(g.user)
+        db.session.commit()
+        flash('Your changes have been saved.')
+        return redirect(url_for('edit'))
+    else:
+        form.nickname.data = g.user.nickname
+        form.about_me.data = g.user.about_me
+    return render_template('edit.html', form=form)

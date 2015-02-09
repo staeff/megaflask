@@ -1,3 +1,4 @@
+from hashlib import md5
 from app import db
 
 
@@ -9,11 +10,12 @@ class User(db.Model):
 
     # virtual field to help with relationships
     posts = db.relationship('Post', backref='author', lazy='dynamic')
-
+    about_me = db.Column(db.String(140))
+    last_seen = db.Column(db.DateTime)
 
     """ is_authenticated, is_active, is_anonymous, get_id are classes
     for Flask-Login """
-    
+
     def is_authenticated(self):
         """ returns True for users unless they are not
         allowed to authenticate for some reason"""
@@ -35,6 +37,10 @@ class User(db.Model):
             return unicode(self.id)  # python 2
         except NameError:
             return str(self.id)  # python 3
+
+    def avatar(self, size):
+        return 'http://www.gravatar.com/avatar/%s?d=wavatar&s=%d' % \
+             (md5(self.email.encode('utf-8')).hexdigest(), size)
 
     def __repr__(self):
         return '<User %r>' % (self.nickname)
