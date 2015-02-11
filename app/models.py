@@ -13,6 +13,23 @@ class User(db.Model):
     about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime)
 
+    # Is a static method, since it this operation does not apply to any
+    # particular instance of the class.
+    @staticmethod
+    def make_unique_nickname(nickname):
+        """ Checks if nickname already exists in DB. If so appends number
+        to nickname and checks again until nickname does not exists in DB.
+        Returns this nickname. """
+        if User.query.filter_by(nickname=nickname).first() is None:
+            return nickname
+        version = 2
+        while True:
+            new_nickname = nickname = str(version)
+            if User.query.filter_by(nickname=new_nickname).first() is None:
+                break
+            version += 1
+        return new_nickname
+
     """ is_authenticated, is_active, is_anonymous, get_id are classes
     for Flask-Login """
 
