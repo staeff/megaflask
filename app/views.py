@@ -93,6 +93,10 @@ def after_login(resp):
         user = User(nickname=nickname, email=resp.email)
         db.session.add(user)
         db.session.commit()
+        # make the user (implicitely) follow him/herself
+        # easily include the posts in the followed posts query -> tutorial pt. 8
+        db.session.add(user.follow(user))
+        db.session.commit()
     remember_me = False
     if 'remember_me' in session:
         remember_me = session['remember_me']
@@ -138,3 +142,33 @@ def edit():
         form.nickname.data = g.user.nickname
         form.about_me.data = g.user.about_me
     return render_template('edit.html', form=form)
+
+@app.route('/follow/<nickname>')
+def follow(nickname):
+    user = User.query.filter_by(nickname=nickname).first()
+    if user is None:
+        flash('User {0} not found.'.format(nickname))
+        return redirect(url_for('index'))
+    u = g.user.follow(user)
+    if u is None:
+        flash('Can not follow {0}.'.format(nickname))
+        return redirect(url_for('user', nickname=nickname))
+    db.session.add(u)
+    db.session.commit()
+    flash('You are now following {0}!'.format(nickname))
+    return redirect(url_for('user', nickname=nickname))
+
+@app.route('/unfollow/<nickname>')
+def unfollow(nickname):
+    user = User.query.filter_by(nickname=nickname).first()
+    if user is None:
+        flash('User {0} not found.'.format())
+        return redirect(url_for('index'))
+    u = g.user.unfollow(user)
+    if u is None:
+        flash('Can not unfollow {0}.'.format(nickname))
+        return redirect(url_for('user', nickname=nickname))
+    db.session.add(u)
+    db.session.commit()
+    flash('You have stopped following {0}.'.format(nickname))
+    return redirect(url_for('user', nickname=nickname))
