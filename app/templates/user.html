@@ -18,6 +18,12 @@
                     <a href="{{ url_for('unfollow', nickname=user.nickname) }}">Unfollow</a>
                   {% endif %}
                 </p>
+                <h3>List of followers</h3>
+                <ul>
+                  {% for f in follower %}
+                  <li><a href="{{f.nickname}}">{{ f.nickname }}</a></li>
+                  {% endfor %}
+                </ul>
             </td>
         </tr>
     </table>

@@ -114,6 +114,7 @@ def logout():
 @login_required
 def user(nickname):
     user = User.query.filter_by(nickname=nickname).first()
+    follower = user.followers.all()
     if user is None:
         flash('User {0} not found.'.format(nickname))
         return redirect(url_for('index'))
@@ -124,7 +125,8 @@ def user(nickname):
 
     return render_template('user.html',
                             user=user,
-                            posts=posts)
+                            posts=posts,
+                            follower=follower)
 
 @app.route('/edit', methods=['GET', 'POST'])
 @login_required
