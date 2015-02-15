@@ -1,0 +1,23 @@
+diff --git a/app/__init__.py b/app/__init__.py
+index a04e833..b301baf 100644
+--- a/app/__init__.py
++++ b/app/__init__.py
+@@ -47,7 +47,7 @@ if not app.debug:
+     app.logger.info('microblog startup')
+ 
+ # debug toolbar
+-# app.debug = True
++app.debug = True
+ toolbar = DebugToolbarExtension(app)
+ 
+ from app import views, models
+diff --git a/run.py b/run.py
+index de6654a..c8e82c2 100755
+--- a/run.py
++++ b/run.py
+@@ -1,4 +1,4 @@
+ #!/usr/bin/env python
+ from app import app
+ 
+-app.run()
++app.run(debug = True)
