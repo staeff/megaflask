@@ -9,8 +9,9 @@ from flask.ext.login import login_user, logout_user, current_user, \
     login_required
 from datetime import datetime
 from app import app, db, lm, oid
-from .forms import LoginForm, EditForm
-from .models import User
+from .forms import LoginForm, EditForm, PostForm
+from .models import User, Post
+from config import POSTS_PER_PAGE
 
 # load_user is registered with Flask-Login through this decorator
 @lm.user_loader
@@ -41,18 +42,29 @@ def internal_error(error):
     db.session.rollback()
     return render_template('500.html'), 500
 
-@app.route('/')
-@app.route('/index')
+@app.route('/' , methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
+@app.route('/index/<int:page>', methods=['GET', 'POST'])
 # page only visible for logged in users
 @login_required
-def index():
-    user = g.user
-    with open('posts.json', 'r') as f:
-        posts = json.load(f)
-
+def index(page=1):
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Post(body=form.post.data, timestamp=datetime.utcnow(),
+                author=g.user)
+        db.session.add(post)
+        db.session.commit()
+        flash('Your post is now live!')
+        # force the browser to issue another request after the form submission
+        # to avoid accidental resubmission of posts.
+        return redirect(url_for('index'))
+    # followed_posts() returns sqlalchemy object
+    # The paginate method can be called on any query object
+    posts = g.user.followed_posts().paginate(page, POSTS_PER_PAGE, False)
     return render_template("index.html",
                            title='Pycodeshare',
                            user=user,
+                           form=form,
                            posts=posts)
 
 
@@ -111,18 +123,15 @@ def logout():
 
 # <nickname> turns to be an argument to the 'user' function
 @app.route('/user/<nickname>')
+@app.route('/user/<nickname>/<int:page>')
 @login_required
-def user(nickname):
+def user(nickname, page=1):
     user = User.query.filter_by(nickname=nickname).first()
     follower = user.followers.all()
     if user is None:
         flash('User {0} not found.'.format(nickname))
         return redirect(url_for('index'))
-    posts = [
-        {'author': user, 'body': 'Test post #1'},
-        {'author': user, 'body': 'Test post #2'}
-    ]
-
+    posts = user.posts.paginate(page, POSTS_PER_PAGE, False)
     return render_template('user.html',
                             user=user,
                             posts=posts,
