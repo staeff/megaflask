@@ -19,7 +19,6 @@ To run the application in the development web server just execute `run.py` with 
 
 **Database migrations**
 
-
 * the db_downgrade.py script goes back one revision at a time
 * the upgrade.py script goes directly to the latest revision.
 
@@ -28,3 +27,12 @@ https://alembic.readthedocs.org It is from the author of SQLAlchemy.
 
 It would be great if you could update the tutorial to use (flask-)alembic
 rather than the more or less abandoned sqlalchemy-migrate.
+
+Added scripts to automatically fill/empty or change the database.
+fill_db_empty.py needs to be improved to delete the content of the followers
+table. (Which is tricky because, it works different, then the DBs defined in
+the model classes).
+
+`fill_db_followers` supersedes `fill_db_users` because it creates the users
+but also the follow-relation as well. The blog post creation could also go in
+here.
