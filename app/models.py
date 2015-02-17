@@ -1,11 +1,19 @@
 from hashlib import md5
 from app import db
+from app import app
+
+import sys
+if sys.version_info >= (3, 0):
+    enable_search = False
+else:
+    enable_search = True
+    import flask.ext.whooshalchemy as whooshalchemy
 
 # Note that we are not declaring this table as a model.
 # Since this is an auxiliary table that has no data other than the foreign
 # keys, we use the lower level APIs in flask-sqlalchemy to create the
 # table without an associated model.
-followers =db.Table(
+followers = db.Table(
     'followers',
     db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('followed_id', db.Integer, db.ForeignKey('user.id')),
@@ -89,7 +97,7 @@ class User(db.Model):
         """  Takes the followed relationship query, which returns all
         the (follower, followed) pairs followed by user. Filter it by the
         followed user. The followed relationship has a lazy mode of dynamic.
-        Its not the result of the query, its the actual query object 
+        Its not the result of the query, its the actual query object
         before execution. """
         return self.followed.filter(
             followers.c.followed_id == user.id).count() > 0
@@ -110,6 +118,10 @@ class Post(db.Model):
                     timestamp=datetime.datetime.utcnow(),
                     author=<userobject>)
     """
+
+    # array with all the database fields that will be in the searchable index.
+    __searchable__ = ['body']
+
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String(140))
     timestamp = db.Column(db.DateTime)
@@ -117,3 +129,6 @@ class Post(db.Model):
 
     def __repr__(self):
         return '<Post %r>' % (self.body)
+
+if enable_search:
+    whooshalchemy.whoosh_index(app, Post)
