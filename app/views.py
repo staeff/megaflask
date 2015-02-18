@@ -11,6 +11,7 @@ from datetime import datetime
 from app import app, db, lm, oid
 from .forms import LoginForm, EditForm, PostForm, SearchForm
 from .models import User, Post
+from .emails import follower_notification
 from config import POSTS_PER_PAGE, MAX_SEARCH_RESULTS
 
 # load_user is registered with Flask-Login through this decorator
@@ -162,6 +163,9 @@ def follow(nickname):
     if user is None:
         flash('User {0} not found.'.format(nickname))
         return redirect(url_for('index'))
+    if user == g.user:
+        flash('You can\'t follow yourself!')
+        return redirect(url_for('user', nickname=nickname))
     u = g.user.follow(user)
     if u is None:
         flash('Can not follow {0}.'.format(nickname))
@@ -169,6 +173,7 @@ def follow(nickname):
     db.session.add(u)
     db.session.commit()
     flash('You are now following {0}!'.format(nickname))
+    follower_notification(user, g.user)
     return redirect(url_for('user', nickname=nickname))
 
 @app.route('/unfollow/<nickname>')
@@ -177,6 +182,9 @@ def unfollow(nickname):
     if user is None:
         flash('User {0} not found.'.format())
         return redirect(url_for('index'))
+    if user == g.user:
+        flash('You can\'t unfollow yourself!')
+        return redirect(url_for('user', nickname=nickname))
     u = g.user.unfollow(user)
     if u is None:
         flash('Can not unfollow {0}.'.format(nickname))

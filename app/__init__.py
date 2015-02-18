@@ -4,6 +4,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from flask.ext.openid import OpenID
+from flask.ext.mail import Mail
 from config import basedir, ADMINS, MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, \
     MAIL_PASSWORD
 
@@ -19,6 +20,7 @@ lm.init_app(app)
 lm.login_view = 'login'
 # Flask-OpenID needs a path where files can be stored
 oid = OpenID(app, os.path.join(basedir, 'tmp'))
+mail = Mail(app)
 
 # error-emails are only enabled, when we are not in debugging mode
 if not app.debug:
