@@ -7,6 +7,7 @@ from flask.ext.openid import OpenID
 from flask.ext.mail import Mail
 from config import basedir, ADMINS, MAIL_SERVER, MAIL_PORT, MAIL_USERNAME, \
     MAIL_PASSWORD
+from .momentjs import momentjs
 
 # creation of the flask object
 app = Flask(__name__)
@@ -47,6 +48,8 @@ if not app.debug:
     app.logger.addHandler(file_handler)
     app.logger.setLevel(logging.INFO)
     app.logger.info('microblog startup')
+
+app.jinja_env.globals['momentjs'] = momentjs
 
 # debug toolbar
 # app.debug = True
