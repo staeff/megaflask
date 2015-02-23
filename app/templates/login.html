@@ -15,26 +15,42 @@
         form.elements['openid'].value = openid;
     }
     </script>
-    <h1>Sign In</h1>
-    <form action="" method="post" name="login">
+
+    <div class="container" action="" method="post" name="login">
+
+      <form class="form-signin" method="post" name="login">
         {# form is a template argument #}
         {# here appears a hidden field that implements CSRF prevention #}
         {{ form.hidden_tag() }}
-        <p>
-            Please enter your OpenID, or select one of the providers below:<br>
-            {{ form.openid(size=80) }}
-            {# validator error messages are in form.field_name.errors #}
-            {% for error in form.openid.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}<br>
-            |{% for pr in providers %}
-                <a href="javascript:set_openid('{{ pr.url }}', '{{ pr.name }}');">{{ pr.name }}</a> |
-            {% endfor %}
-        </p>
-        <p>{{ form.remember_me }} Remember Me</p>
+        <h2 class="form-signin-heading">Please sign in</h2>
+        <label for="inputOID">Please enter your OpenID, or select one of the providers below:</label>
+        {{ form.openid(id="inputOID", class="form-control", placeholder="Email address or OpenID provider",
+                required=1, autofocus=1) }}
+        {# validator error messages are in form.field_name.errors #}
+        {% for error in form.openid.errors %}
+        <div class="alert alert-danger" role="alert">{{ error }}</div>
+        {% endfor %}
+
+        <div class="help-block">Click on your OpenID provider below:</div>
+        <div class="form-group">
+          {% for pr in providers %}
+          <a href="javascript:set_openid('{{pr.url}}', '{{pr.name}}');">
+            <img src="/static/img/{{pr.name.lower()}}.png" class="img-thumbnail"
+                 style="margin:2px;" />
+          </a>
+          {% endfor %}
+        </div>
+
+        <div class="checkbox">
+          <label>
+            {{ form.remember_me }} Remember me
+          </label>
+        </div>
         {# The submit button is not defined the form class.
-           We define it in the Template in HTML. It doesn't carry any Data
-           therefore doesn't need to be defined in the class #}
-        <p><input type="submit" value="Sign In"></p>
-    </form>
+        We define it in the Template in HTML. It doesn't carry any Data
+        therefore doesn't need to be defined in the class #}
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      </form>
+
+    </div> <!-- /container -->
 {% endblock %}
