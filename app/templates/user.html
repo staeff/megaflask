@@ -10,17 +10,19 @@
     </div>
     <h1>{{ user.nickname }}</h1>
     {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
-    {% if user.last_seen %}<p><em>Last seen on: {{ momentjs(user.last_seen).calendar() }}</em></p>{% endif %}
-    <p>Followers: {{ user.followers.count() - 1 }} | Following: {{ user.followed.count() - 1 }} |
+    {% if user.last_seen %}
+    <p><em>{{ _('Last seen:') }} {{ momentjs(user.last_seen).calendar() }}</em></p>
+    {% endif %}
+    <p>{{ _('Followers:')}} {{ user.followers.count() - 1 }} | {{ _('Following:') }} {{ user.followed.count() - 1 }} |
       {% if user.id == g.user.id %}
-      <a href="{{url_for('edit')}}">Edit your profile</a>
+      <a href="{{url_for('edit')}}">{{ _('Edit your profile') }}</a>
       {% elif not g.user.is_following(user) %}
-      <a href="{{url_for('follow', nickname=user.nickname)}}">Follow</a>
+      <a href="{{url_for('follow', nickname=user.nickname)}}">{{ _('Follow') }}</a>
       {% else %}
-      <a href="{{url_for('unfollow', nickname=user.nickname)}}">Unfollow</a>
+      <a href="{{url_for('unfollow', nickname=user.nickname)}}">{{ _('Unfollow') }}</a>
       {% endif %}
     </p>
-    <h3>List of followers</h3>
+    <h3>{{ _('List of followers') }}</h3>
     <ul>
       {% for f in follower %}
       <li><a href="{{f.nickname}}">{{ f.nickname }}</a></li>
@@ -34,14 +36,29 @@
 
   <ul class="pager">
     {% if posts.has_prev %}
-    <li><a href="{{ url_for('user', nickname=user.nickname, page=posts.prev_num) }}"><span aria-hidden="true">&larr;</span>Previous</a></li>
+    <li>
+      <a href="{{ url_for('user', nickname=user.nickname, page=posts.prev_num) }}">
+        <span aria-hidden="true">&larr;</span>{{ _('Previous')}}
+      </a>
+    </li>
     {% else %}
-    <li class="disabled"><a href="#"><span aria-hidden="true">&larr;</span>Previous</a></li>
+    <li class="disabled">
+      <a href="#">
+        <span aria-hidden="true">&larr;</span>{{ _('Previous') }}
+      </a>
+    </li>
     {% endif %}
     {% if posts.has_next %}
-    <li><a href="{{ url_for('user', nickname=user.nickname, page=posts.next_num) }}">Next <span aria-hidden="true">&rarr;</span></a></li>
+    <li>
+      <a href="{{ url_for('user', nickname=user.nickname, page=posts.next_num) }}">
+        {{ _('Next') }} <span aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
     {% else %}
-    <li class="disabled"><a href="#">Next <span aria-hidden="true">&rarr;</span></a></li>
+    <li class="disabled">
+      <a href="#">{{ _('Next') }} <span aria-hidden="true">&rarr;</span>
+      </a>
+    </li>
     {% endif %}
   </ul>
 </div>

@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
     <div class="container">
-    <h1>Hi, {{ g.user.nickname }}!</h1>
+    <h1>{{ _('Hi, %(nickname)s!', nickname=g.user.nickname)}}</h1>
     {% include 'flash.html' %}
     <div class="well">
       <form action="" method="post" name="post">
         {{ form.hidden_tag() }}
         <div class="form-group">
-          <label for="post">Say something:</label>
+          <label for="post">{{ _('Say something:')}}</label>
           {{ form.post(size=30, maxlength=140) }}
           {% for error in form.errors.post %}
           <div class="alert alert-danger alert-dismissible" role="alert">{{ error }}</div>
           {% endfor %}
         </div>
-        <button type="submit" class="btn btn-primary">Post!</button>
+        <button type="submit" class="btn btn-primary">{{ _('Post!') }}</button>
       </form>
     </div>
     {% for post in posts.items %}
@@ -21,14 +21,14 @@
     {% endfor %}
     <ul class="pager">
       {% if posts.has_prev %}
-      <li><a href="{{ url_for('index', page=posts.prev_num) }}"><span aria-hidden="true">&larr;</span>Previous</a></li>
+      <li><a href="{{ url_for('index', page=posts.prev_num) }}"><span aria-hidden="true">&larr;</span>{{ _('Previous') }}</a></li>
       {% else %}
-      <li class="disabled"><a href="#"><span aria-hidden="true">&larr;</span>Previous</a></li>
+      <li class="disabled"><a href="#"><span aria-hidden="true">&larr;</span>{{ _('Previous') }}</a></li>
       {% endif %}
       {% if posts.has_next %}
-      <li><a href="{{ url_for('index', page=posts.next_num) }}">Next <span aria-hidden="true">&rarr;</span></a></li>
+      <li><a href="{{ url_for('index', page=posts.next_num) }}">{{ _('Next') }} <span aria-hidden="true">&rarr;</span></a></li>
       {% else %}
-      <li class="disabled"><a href="#">Next <span aria-hidden="true">&rarr;</span></a></li>
+      <li class="disabled"><a href="#">{{ _('Next') }} <span aria-hidden="true">&rarr;</span></a></li>
       {% endif %}
     </ul>
   </div>

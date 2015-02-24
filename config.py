@@ -1,3 +1,4 @@
+# -*- coding=utf-8 -*-
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -30,12 +31,18 @@ MAIL_PASSWORD = None
 # MAIL_USE_TLS = False
 # MAIL_USE_SSL = True
 # set environ vars
-# $ export MAIL_USERNAME=username ...	
+# $ export MAIL_USERNAME=username ...
 # MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
 # MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
 
 # administrator list
 ADMINS = ['you@example.com']
+
+LANGUAGES = {
+    'en': 'English',
+    'es': 'Español',
+    'de': 'Deutsch'
+}
 
 # pagination
 POSTS_PER_PAGE = 3
