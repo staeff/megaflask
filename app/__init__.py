@@ -28,6 +28,8 @@ oid = OpenID(app, os.path.join(basedir, 'tmp'))
 mail = Mail(app)
 babel = Babel(app)
 
+
+
 class CustomJSONEncoder(JSONEncoder):
     """ This class adds support for lazy translation texts to Flask's
     JSON encoder. This is necessary when flashing translated texts."""
@@ -71,7 +73,7 @@ if not app.debug:
 app.jinja_env.globals['momentjs'] = momentjs
 
 # debug toolbar
-# app.debug = True
+app.debug = True
 toolbar = DebugToolbarExtension(app)
 
 from app import views, models

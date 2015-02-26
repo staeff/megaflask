@@ -5,16 +5,19 @@ from flask import url_for
 # The g global is setup by Flask to store and share data
 # during the life of a request.
 from flask import request, g
+from flask import jsonify
+from translate import microsoft_translate
 from flask.ext.login import login_user, logout_user, current_user, \
     login_required
 from flask.ext.babel import gettext
 from datetime import datetime
+from guess_language import guessLanguage
 from app import app, db, lm, oid, babel
+
 from .forms import LoginForm, EditForm, PostForm, SearchForm
 from .models import User, Post
 from .emails import follower_notification
-from config import POSTS_PER_PAGE, MAX_SEARCH_RESULTS
-from config import LANGUAGES
+from config import POSTS_PER_PAGE, MAX_SEARCH_RESULTS, LANGUAGES
 
 # load_user is registered with Flask-Login through this decorator
 @lm.user_loader
@@ -30,9 +33,8 @@ def get_locale():
     The best_match method does all the work. Where is it coming from?
     @babel.localeselector? How do I find this out?"""
     # return request.accept_languages.best_match(LANGUAGES.keys())
-
-    # Forcing languages for debugging: de, es
-    return 'de'
+    # Forcing languages for debugging: de, es, en
+    return 'en'
 
 @app.before_request
 def before_request():
@@ -66,8 +68,12 @@ def internal_error(error):
 def index(page=1):
     form = PostForm()
     if form.validate_on_submit():
+        language = guessLanguage(form.post.data)
+
+        if language == 'UNKNOWN' or len(language) > 5:
+            language = ''
         post = Post(body=form.post.data, timestamp=datetime.utcnow(),
-                author=g.user)
+                author=g.user, language=language)
         db.session.add(post)
         db.session.commit()
         flash(gettext('Your post is now live!'))
@@ -227,3 +233,14 @@ def search_results(query):
     return render_template('search_results.html',
                             query=query,
                             results=results)
+
+@app.route('/translate', methods=['POST'])
+@login_required
+def translate():
+    # data = request.form['text'] + request.form['sourceLang'] +
+    # return data
+    return jsonify({
+    'text': microsoft_translate(
+        request.form['text'],
+        request.form['sourceLang'],
+        request.form['destLang'])})

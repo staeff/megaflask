@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-02-24 17:49+0000\n"
+"POT-Creation-Date: 2015-02-26 11:37+0000\n"
 "PO-Revision-Date: 2015-02-24 11:54+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -33,43 +33,56 @@ msgstr ""
 msgid "This nickname is already in user. Please choose another one."
 msgstr "Der Nickname ist bereits vergeben. Bitte einen anderen wählen."
 
-#: app/views.py:73
+#: app/translate.py:17
+msgid "Error: translation service not configured."
+msgstr ""
+
+#: app/translate.py:48
+msgid "Error: translation service not available."
+msgstr ""
+
+#: app/translate.py:65
+#, fuzzy
+msgid "Error: Unexpected error."
+msgstr "Ein Fehler ist aufgetreten"
+
+#: app/views.py:75
 msgid "Your post is now live!"
 msgstr "Dein Beitrag wurde veröffentlicht."
 
-#: app/views.py:112
+#: app/views.py:114
 msgid "Invalid login. Please try again."
 msgstr "Login fehlgeschlagen. Bitte erneut versuchen."
 
-#: app/views.py:149 app/views.py:178 app/views.py:197
+#: app/views.py:151 app/views.py:180 app/views.py:199
 msgid "User {0} not found."
 msgstr "Nutzer {0} nicht gefunden"
 
-#: app/views.py:167
+#: app/views.py:169
 msgid "Your changes have been saved."
 msgstr "Deine Änderungen wurden gespeichert."
 
-#: app/views.py:181
+#: app/views.py:183
 msgid "You can't follow yourself!"
 msgstr "Du kannst Dir selbst nicht folgen!"
 
-#: app/views.py:185
+#: app/views.py:187
 msgid "Can not follow {0}."
 msgstr "Kann {0} nicht folgen."
 
-#: app/views.py:189
+#: app/views.py:191
 msgid "You are now following {0}!"
 msgstr "Du folgst jetzt {0}!"
 
-#: app/views.py:200
+#: app/views.py:202
 msgid "You can't unfollow yourself!"
 msgstr "Du kannst Dich selbst nicht entfolgen!"
 
-#: app/views.py:204
+#: app/views.py:206
 msgid "Can not unfollow {0}."
 msgstr "Kann {0} nicht entfolgen."
 
-#: app/views.py:208
+#: app/views.py:210
 msgid "You have stopped following {0}."
 msgstr "Du folgst {0} nicht mehr."
 
@@ -103,15 +116,19 @@ msgstr "Dein Profil"
 msgid "Logout"
 msgstr ""
 
+#: app/templates/base.html:94
+msgid "Error: Could not contact server."
+msgstr ""
+
 #: app/templates/edit.html:6
 msgid "Edit Your Profile"
 msgstr "Profil bearbeiten"
 
-#: app/templates/edit.html:12
+#: app/templates/edit.html:15
 msgid "Your nickname:"
 msgstr "Dein Nickname:"
 
-#: app/templates/edit.html:19
+#: app/templates/edit.html:22
 msgid "About yourself:"
 msgstr "Über Dich:"
 
@@ -179,6 +196,10 @@ msgstr "Anmelden"
 #, python-format
 msgid "%(nickname)s said %(when)s:"
 msgstr "%(nickname)s sagte %(when)s:"
+
+#: app/templates/post.html:18
+msgid "Translate"
+msgstr "Übersetzen"
 
 #: app/templates/search_results.html:5
 #, python-format

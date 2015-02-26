@@ -44,6 +44,11 @@ LANGUAGES = {
     'de': 'Deutsch'
 }
 
+# microsoft translation service
+MS_TRANSLATOR_CLIENT_ID = '' # enter your MS translator app id here
+MS_TRANSLATOR_CLIENT_SECRET = '' # enter your MS translator app secret here
+
+
 # pagination
 POSTS_PER_PAGE = 3
 MAX_SEARCH_RESULTS = 50

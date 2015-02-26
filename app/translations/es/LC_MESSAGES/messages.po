@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-02-24 17:49+0000\n"
+"POT-Creation-Date: 2015-02-26 11:37+0000\n"
 "PO-Revision-Date: 2015-02-24 11:54+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: es <LL@li.org>\n"
@@ -35,47 +35,60 @@ msgstr ""
 msgid "This nickname is already in user. Please choose another one."
 msgstr "Este nombre de usuario ya esta usado. Por favor elije otro."
 
-#: app/views.py:73
+#: app/translate.py:17
+msgid "Error: translation service not configured."
+msgstr ""
+
+#: app/translate.py:48
+msgid "Error: translation service not available."
+msgstr ""
+
+#: app/translate.py:65
+#, fuzzy
+msgid "Error: Unexpected error."
+msgstr "Un error inesperado ha ocurrido"
+
+#: app/views.py:75
 msgid "Your post is now live!"
 msgstr "¡Tu artículo ha sido publicado!"
 
-#: app/views.py:112
+#: app/views.py:114
 msgid "Invalid login. Please try again."
 msgstr "Credenciales inválidas. Por favor intenta de nuevo."
 
-#: app/views.py:149 app/views.py:178 app/views.py:197
+#: app/views.py:151 app/views.py:180 app/views.py:199
 #, fuzzy
 msgid "User {0} not found."
 msgstr "El usuario %(nickname)s no existe."
 
-#: app/views.py:167
+#: app/views.py:169
 msgid "Your changes have been saved."
 msgstr "Tus cambios han sido guardados."
 
-#: app/views.py:181
+#: app/views.py:183
 msgid "You can't follow yourself!"
 msgstr "¡No te puedes seguir a tí mismo!"
 
-#: app/views.py:185
+#: app/views.py:187
 #, fuzzy
 msgid "Can not follow {0}."
 msgstr "No se pudo seguir a %(nickname)s."
 
-#: app/views.py:189
+#: app/views.py:191
 #, fuzzy
 msgid "You are now following {0}!"
 msgstr "¡Ya estás siguiendo a %(nickname)s!"
 
-#: app/views.py:200
+#: app/views.py:202
 msgid "You can't unfollow yourself!"
 msgstr "¡No te puedes dejar de seguir a tí mismo!"
 
-#: app/views.py:204
+#: app/views.py:206
 #, fuzzy
 msgid "Can not unfollow {0}."
 msgstr "No se pudo dejar de seguir a %(nickname)s."
 
-#: app/views.py:208
+#: app/views.py:210
 #, fuzzy
 msgid "You have stopped following {0}."
 msgstr "Ya no sigues más a %(nickname)s."
@@ -108,15 +121,19 @@ msgstr "Tu Perfil"
 msgid "Logout"
 msgstr "Desconectarse"
 
+#: app/templates/base.html:94
+msgid "Error: Could not contact server."
+msgstr ""
+
 #: app/templates/edit.html:6
 msgid "Edit Your Profile"
 msgstr "Editar Tu Perfil"
 
-#: app/templates/edit.html:12
+#: app/templates/edit.html:15
 msgid "Your nickname:"
 msgstr "Tu nombre de usuario:"
 
-#: app/templates/edit.html:19
+#: app/templates/edit.html:22
 msgid "About yourself:"
 msgstr "Acerca tuyo:"
 
@@ -187,6 +204,10 @@ msgstr "Ingresar"
 #, python-format
 msgid "%(nickname)s said %(when)s:"
 msgstr "%(nickname)s dijo %(when)s:"
+
+#: app/templates/post.html:18
+msgid "Translate"
+msgstr ""
 
 #: app/templates/search_results.html:5
 #, python-format

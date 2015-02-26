@@ -9,7 +9,23 @@
          (url_for('user', nickname=post.author.nickname), post.author.nickname),
          when=momentjs(post.timestamp).fromNow()) }}</p>
       {% endautoescape %}
-      <p><strong>{{ post.body }}</strong></p>
+      <p><strong><span id="post{{post.id}}">{{ post.body }}</span></strong></p>
+      {% if post.language != None and post.language != '' and post.language != g.locale %}
+      <div>
+        <span id="translation{{post.id}}">
+          <script>
+            console.log('{{ post.language }}', '{{ g.locale }}',
+            '#post{{ post.id }}', '#translation{{ post.id }}',
+            '#loading{{ post.id}}')
+          </script>
+          <a href="javascript:translate('{{post.language}}', '{{g.locale}}',
+                   '#post{{post.id}}', '#translation{{post.id }}',
+                   '#loading{{post.id}}')">{{ _('Translate') }}</a>
+        </span>
+        <img src="{{ url_for('static', filename='img/loading.gif') }}" id="loading{{ post.id}}"
+                  style="display: none">
+      </div>
+      {% endif %}
     </td>
   </tr>
 </table>
