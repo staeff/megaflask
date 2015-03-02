@@ -1,9 +1,15 @@
+#!/usr/bin/env python
 # -*- coding=utf-8 -*-
 import os
+from ConfigParser import SafeConfigParser
+
+parser = SafeConfigParser()
+parser.read('config.ini')
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 CSRF_ENABLED = True
-SECRET_KEY = 'you-will-never-know'
+SECRET_KEY = parser.get('flask', 'secretkey')
 
 # list of OpenID
 OPENID_PROVIDERS = [
@@ -45,9 +51,8 @@ LANGUAGES = {
 }
 
 # microsoft translation service
-MS_TRANSLATOR_CLIENT_ID = '' # enter your MS translator app id here
-MS_TRANSLATOR_CLIENT_SECRET = '' # enter your MS translator app secret here
-
+MS_TRANSLATOR_CLIENT_ID = parser.get('ms-translator', 'clientid')
+MS_TRANSLATOR_CLIENT_SECRET = parser.get('ms-translator', 'secret')
 
 # pagination
 POSTS_PER_PAGE = 3
