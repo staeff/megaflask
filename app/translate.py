@@ -38,11 +38,8 @@ def microsoft_translate(text, sourceLang, destLang):
         conn.request("GET",
                      '/V2/Ajax.svc/Translate?' + urlencode(params))
 
-        response = conn.getresponse().read().decode('utf-8')
-        # FIXME!!! Have to split response because response contains a byte order
-        # mark within the string. u'\ufeff"Geht Hallo, wie's dir heute?"'
-        response = response.split('"')[1]
-        response_string = '{{"response":"{0}"}}'.format(response)
+        response = conn.getresponse().read().decode('utf-8-sig')
+        response_string = u'{{"response":{0}}}'.format(response)
         response_json = json.loads(response_string)
         return response_json["response"]
     except:

@@ -123,7 +123,7 @@ class TestCase(unittest.TestCase):
 
     def test_translation(self):
         # This fails but does not give an error
-        # assert microsoft_translate(u'English', 'en', 'es') == u'Inglés'
+        assert microsoft_translate(u'English', 'en', 'es') == u'Inglés'
         assert microsoft_translate(u'Español', 'es', 'en') == u'Spanish'
         assert microsoft_translate(u'Deutsch', 'de', 'en') == u'German'
         assert microsoft_translate(u'English', 'en', 'de') == u'Englisch'
