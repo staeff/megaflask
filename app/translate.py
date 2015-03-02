@@ -1,15 +1,10 @@
-try:
-    import httplib  # Python 2
-except ImportError:
-    import http.client as httplib  # Python 3
-try:
-    from urllib import urlencode  # Python 2
-except ImportError:
-    from urllib.parse import urlencode  # Python 3
+#!/usr/bin/env python
+# coding=utf-8
+
 import json
+import requests
 from app import app
 from flask.ext.babel import gettext
-from config import MAIL_SERVER
 from config import MS_TRANSLATOR_CLIENT_ID, MS_TRANSLATOR_CLIENT_SECRET
 
 
@@ -18,29 +13,27 @@ def microsoft_translate(text, sourceLang, destLang):
         return gettext('Error: translation service not configured.')
     try:
         # get access token
-        params = urlencode({
+        payload = {
             'client_id': MS_TRANSLATOR_CLIENT_ID,
             'client_secret': MS_TRANSLATOR_CLIENT_SECRET,
             'scope': 'http://api.microsofttranslator.com',
-            'grant_type': 'client_credentials'
-        })
-        conn = httplib.HTTPSConnection("datamarket.accesscontrol.windows.net")
-        conn.request("POST", "/v2/OAuth2-13", params)
-        response = json.loads(conn.getresponse().read())
-        token = response[u'access_token']
+            'grant_type': 'client_credentials'}
+
+        r = requests.post('https://datamarket.accesscontrol.windows.net/v2/OAuth2-13', payload)
+        token = r.json()[u'access_token']
+
 
         # translate
-        conn = httplib.HTTPConnection('api.microsofttranslator.com')
-        params = {'appId': 'Bearer ' + token,
-                  'from': sourceLang,
-                  'to': destLang,
-                  'text': text.encode("utf-8")}
-        conn.request("GET",
-                     '/V2/Ajax.svc/Translate?' + urlencode(params))
+        payload = {
+            'appId': 'Bearer ' + token,
+            'from': sourceLang,
+            'to':   destLang,
+            'text': text.encode('utf-8')
+        }
 
-        response = conn.getresponse().read().decode('utf-8-sig')
-        response_string = u'{{"response":{0}}}'.format(response)
-        response_json = json.loads(response_string)
+        r = requests.get('http://api.microsofttranslator.com/V2/Ajax.svc/Translate', params=payload)
+        result = r.content.decode('utf-8-sig')
+        response_json = json.loads(u'{{"response":{0}}}'.format(result))
         return response_json["response"]
     except:
         raise
@@ -66,6 +59,3 @@ def google_translate(text, sourceLang, destLang):
         return response["response"][0][0][0]
     except:
         return gettext('Error: Unexpected error.')
-
-if __name__ == '__main__':
-    print microsoft_translate('Hi, how are you today?', 'en', 'de')
