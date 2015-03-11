@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
+from coverage import coverage
+cov = coverage(branch=True, omit=['flask/*', 'test.py'])
+cov.start()
+
 import os
 import unittest
 from datetime import datetime, timedelta
@@ -19,7 +23,23 @@ class TestCase(unittest.TestCase):
         db.create_all()
 
     def tearDown(self):
+        db.session.remove()
         db.drop_all()
+
+    def test_user(self):
+        # make valid nicknames
+        n = User.make_valid_nickname('John_123')
+        assert n == 'John_123'
+        n = User.make_valid_nickname('John_[123]\n')
+        assert n == 'John_123'
+        # create a user
+        u = User(nickname='john', email='john@example.com')
+        db.session.add(u)
+        db.session.commit()
+        assert u.is_authenticated() is True
+        assert u.is_active() is True
+        assert u.is_anonymous() is False
+        assert u.id == int(u.get_id())
 
     def test_avatar(self):
         # create a user
@@ -116,10 +136,29 @@ class TestCase(unittest.TestCase):
         assert len(f2) == 2
         assert len(f3) == 2
         assert len(f4) == 1
-        assert f1 == [p4, p2, p1]
-        assert f2 == [p3, p2]
-        assert f3 == [p4, p3]
-        assert f4 == [p4]
+        assert f1[0].id == p4.id
+        assert f1[1].id == p2.id
+        assert f1[2].id == p1.id
+        assert f2[0].id == p3.id
+        assert f2[1].id == p2.id
+        assert f3[0].id == p4.id
+        assert f3[1].id == p3.id
+        assert f4[0].id == p4.id
+
+    def test_delete_post(self):
+        # create a user and a post
+        u = User(nickname='john', email='john@example.com')
+        p = Post(body='test post', author=u, timestamp=datetime.utcnow())
+        db.session.add(u)
+        db.session.add(p)
+        db.session.commit()
+        # query the post and destroy the session
+        p = Post.query.get(1)
+        db.session.remove()
+        # delete the post using a new session
+        db.session = db.create_scoped_session()
+        db.session.delete(p)
+        db.session.commit()
 
     def test_translation(self):
         # This fails but does not give an error
@@ -129,4 +168,14 @@ class TestCase(unittest.TestCase):
         assert microsoft_translate(u'English', 'en', 'de') == u'Englisch'
 
 if __name__ == '__main__':
-    unittest.main()
+    try:
+        unittest.main()
+    except:
+        pass
+    cov.stop()
+    cov.save()
+    print("\n\nCoverage Report:\n")
+    cov.report()
+    print("\nHTML version {}".format(os.path.join(basedir, "tmp/coverage/index.html")))
+    cov.html_report(directory='tmp/coverage')
+    cov.erase()

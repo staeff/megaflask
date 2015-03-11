@@ -6,18 +6,19 @@ from flask import url_for
 # during the life of a request.
 from flask import request, g
 from flask import jsonify
-from translate import microsoft_translate
 from flask.ext.login import login_user, logout_user, current_user, \
     login_required
+from flask.ext.sqlalchemy import get_debug_queries
 from flask.ext.babel import gettext
 from datetime import datetime
 from guess_language import guessLanguage
 from app import app, db, lm, oid, babel
-
 from .forms import LoginForm, EditForm, PostForm, SearchForm
 from .models import User, Post
 from .emails import follower_notification
-from config import POSTS_PER_PAGE, MAX_SEARCH_RESULTS, LANGUAGES
+from .translate import microsoft_translate
+from config import POSTS_PER_PAGE, MAX_SEARCH_RESULTS, LANGUAGES, \
+    DATABASE_QUERY_TIMEOUT
 
 # load_user is registered with Flask-Login through this decorator
 @lm.user_loader
@@ -50,6 +51,19 @@ def before_request():
         # make SearchForm available to all templates
         g.search_form = SearchForm()
     g.locale = get_locale()
+
+@app.after_request
+def after_request(response):
+    for query in get_debug_queries():
+        if query.duration >= DATABASE_QUERY_TIMEOUT:
+            app.logger.warning(
+                """SLOW QUERY: {}
+                   Parameters: {}
+                   Duration: {: f}s
+                   Context: {}
+                """.format(query.statement, query.parameters, query.duration,
+                           query.context))
+    return response
 
 @app.errorhandler(404)
 def not_found_error(error):
@@ -213,6 +227,21 @@ def unfollow(nickname):
     db.session.commit()
     flash(gettext('You have stopped following {0}.'.format(nickname)))
     return redirect(url_for('user', nickname=nickname))
+
+@app.route('/delete/<int:id>')
+@login_required
+def delete(id):
+    post = Post.query.get(id)
+    if post is None:
+        flash('Post not found.')
+        return redirect(url_for('index'))
+    if post.author.id != g.user.id:
+        flash('You cannot delete this post.')
+        return redirect(url_for('index'))
+    db.session.delete(post)
+    db.session.commit()
+    flash('Your post has been deleted.')
+    return redirect(url_for('index'))
 
 @app.route('/search', methods=['POST'])
 @login_required
