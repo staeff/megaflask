@@ -20,7 +20,11 @@ OPENID_PROVIDERS = [
     {'name': 'MyOpenID', 'url': 'https://www.myopenid.com'}]
 
 # Path of the database file for Flask-SQLAlchemy
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
+if os.environ.get['DATABASE_URL'] is None:
+    SQLALCHEMY_DATABASE_URI = ('sqlite:///' + os.path.join(basedir, 'app.db') +
+                              '?check_same_thread=False')
+else:
+    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
 # Path where SQLAlchemy-migrate stores data files
 SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 SQLALCHEMY_RECORD_QUERIES = True
@@ -59,5 +63,5 @@ MS_TRANSLATOR_CLIENT_ID = parser.get('ms-translator', 'clientid')
 MS_TRANSLATOR_CLIENT_SECRET = parser.get('ms-translator', 'secret')
 
 # pagination
-POSTS_PER_PAGE = 3
+POSTS_PER_PAGE = 50
 MAX_SEARCH_RESULTS = 50
