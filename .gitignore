@@ -5,5 +5,4 @@ search.db
 test.db
 flask
 zip
-*.mo
 config.ini

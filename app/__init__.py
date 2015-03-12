@@ -45,7 +45,7 @@ class CustomJSONEncoder(JSONEncoder):
 app.json_encoder = CustomJSONEncoder
 
 # error-emails are only enabled, when we are not in debugging mode
-if not app.debug:
+if not app.debug and MAIL_SERVER != '':
     import logging
     from logging.handlers import SMTPHandler
     credentials = None
@@ -57,8 +57,8 @@ if not app.debug:
     mail_handler.setLevel(logging.ERROR)
     app.logger.addHandler(mail_handler)
 
-# logfiles are only enabled, when we are not in debugging mode
-if not app.debug:
+# logfiles are only enabled, when we are not in debug mode
+if not app.debug and os.environ.get('HEROKU') is None:
     import logging
     from logging.handlers import RotatingFileHandler
     file_handler = RotatingFileHandler('tmp/microblog.log', 'a',
@@ -70,10 +70,17 @@ if not app.debug:
     app.logger.setLevel(logging.INFO)
     app.logger.info('microblog startup')
 
+if os.environ.get('HEROKU') is not None:
+    import logging
+    stream_handler = loggin.StreamHandler()
+    app.logger.addHandler(stream_handler)
+    app.logger.setLevel(loggin.INFO)
+    app.looger.info('microblog startup')
+
 app.jinja_env.globals['momentjs'] = momentjs
 
 # debug toolbar
-app.debug = True
+# app.debug = True
 toolbar = DebugToolbarExtension(app)
 
 from app import views, models

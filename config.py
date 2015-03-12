@@ -20,7 +20,7 @@ OPENID_PROVIDERS = [
     {'name': 'MyOpenID', 'url': 'https://www.myopenid.com'}]
 
 # Path of the database file for Flask-SQLAlchemy
-if os.environ.get['DATABASE_URL'] is None:
+if os.environ.get('DATABASE_URL') is None:
     SQLALCHEMY_DATABASE_URI = ('sqlite:///' + os.path.join(basedir, 'app.db') +
                               '?check_same_thread=False')
 else:
@@ -29,6 +29,9 @@ else:
 SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 SQLALCHEMY_RECORD_QUERIES = True
 WHOOSH_BASE = os.path.join(basedir, 'search.db')
+
+# Disable Whoosh on Heroku
+WHOOSH_ENABLED = os.environ.get('HEROKU') is None
 
 # slow database query treshold (in seconds)
 DATABASE_QUERY_TIMEOUT = 0.5

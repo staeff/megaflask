@@ -2,12 +2,13 @@ from hashlib import md5
 import re
 from app import db
 from app import app
+from config import WHOOSH_ENABLED
 
 import sys
 if sys.version_info >= (3, 0):
     enable_search = False
 else:
-    enable_search = True
+    enable_search = WHOOSH_ENABLED
     import flask.ext.whooshalchemy as whooshalchemy
 
 # Note that we are not declaring this table as a model.
@@ -116,7 +117,7 @@ class User(db.Model):
                 followers.c.follower_id == self.id).order_by(
                     Post.timestamp.desc())
 
-    def __repr__(self):
+    def __repr__(self): # pragma: no cover
         return '<User %r>' % (self.nickname)
 
 
@@ -137,7 +138,7 @@ class Post(db.Model):
     # code of guessed language for translation facility
     language = db.Column(db.String(5))
 
-    def __repr__(self):
+    def __repr__(self): # pragma: no cover
         return '<Post %r>' % (self.body)
 
 if enable_search:
