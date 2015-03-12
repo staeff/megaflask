@@ -1,15 +1,11 @@
 #!/usr/bin/env python
 # -*- coding=utf-8 -*-
 import os
-from ConfigParser import SafeConfigParser
-
-parser = SafeConfigParser()
-parser.read('config.ini')
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 CSRF_ENABLED = True
-SECRET_KEY = parser.get('flask', 'secretkey')
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # list of OpenID
 OPENID_PROVIDERS = [
@@ -19,12 +15,8 @@ OPENID_PROVIDERS = [
     {'name': 'Flickr', 'url': 'http://www.flickr.com/<username>'},
     {'name': 'MyOpenID', 'url': 'https://www.myopenid.com'}]
 
-# Path of the database file for Flask-SQLAlchemy
-if os.environ.get('DATABASE_URL') is None:
-    SQLALCHEMY_DATABASE_URI = ('sqlite:///' + os.path.join(basedir, 'app.db') +
-                              '?check_same_thread=False')
-else:
-    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+
 # Path where SQLAlchemy-migrate stores data files
 SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 SQLALCHEMY_RECORD_QUERIES = True
@@ -62,8 +54,8 @@ LANGUAGES = {
 }
 
 # microsoft translation service
-MS_TRANSLATOR_CLIENT_ID = parser.get('ms-translator', 'clientid')
-MS_TRANSLATOR_CLIENT_SECRET = parser.get('ms-translator', 'secret')
+MS_TRANSLATOR_CLIENT_ID = os.environ['MS_TRANSLATOR_CLIENT_ID']
+MS_TRANSLATOR_CLIENT_SECRET = os.environ['MS_TRANSLATOR_CLIENT_SECRET']
 
 # pagination
 POSTS_PER_PAGE = 50
